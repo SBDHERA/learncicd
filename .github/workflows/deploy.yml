@@ -1,4 +1,4 @@
-name: Deploy Static Website to GitHub Pages
+name: CI/CD Pipeline
 
 on:
   push:
@@ -14,7 +14,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # --- CI JOB: Test & Validate Code ---
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install HTMLHint (Linter)
+        run: npm install -g htmlhint
+
+      - name: Run HTML Validation
+        run: htmlhint index.html
+
+  # --- CD JOB: Deploy to GitHub Pages (Runs only if lint succeeds) ---
   deploy:
+    needs: lint  # This ensures deployment only happens if the linting job passes!
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
