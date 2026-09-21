@@ -1,2 +1,2 @@
 # learncicd
-I have this repo to learn the CI / CD Pipeline
+I have created this repo to learn the CI / CD Pipeline
