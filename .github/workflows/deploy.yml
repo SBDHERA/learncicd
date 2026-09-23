@@ -27,7 +27,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm' # <-- This tells GitHub Actions to automatically cache npm packages!
 
       - name: Install HTMLHint (Linter)
         run: npm install -g htmlhint
