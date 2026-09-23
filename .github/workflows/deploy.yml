@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # --- CI JOB: Test & Validate Code ---
+  # --- CI JOB: Test & Validate Code (Runs on PRs and Pushes) ---
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -34,9 +34,10 @@ jobs:
       - name: Run HTML Validation
         run: htmlhint index.html
 
-  # --- CD JOB: Deploy to GitHub Pages (Runs only if lint succeeds) ---
+  # --- CD JOB: Deploy to GitHub Pages (Runs ONLY when merged/pushed to main) ---
   deploy:
-    needs: lint  # This ensures deployment only happens if the linting job passes!
+    needs: lint
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
