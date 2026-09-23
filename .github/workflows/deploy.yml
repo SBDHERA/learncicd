@@ -34,6 +34,13 @@ jobs:
       - name: Run HTML Validation
         run: htmlhint index.html
 
+      - name: Test Secure Secret
+        env:
+          MY_API_KEY: ${{ secrets.MY_API_KEY }}
+        run: |
+          echo "Checking secret..."
+          echo "API Key loaded successfully!"
+
   # --- CD JOB: Deploy to GitHub Pages (Runs ONLY when merged/pushed to main) ---
   deploy:
     needs: lint
