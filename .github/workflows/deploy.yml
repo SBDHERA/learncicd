@@ -67,12 +67,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Convert repository name to lowercase
+        id: repo_case
+        uses: ASzc/change-string-case-action@v6
+        with:
+          string: ${{ github.repository }}
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/learncicd-app:latest
+          tags: ghcr.io/${{ steps.repo_case.outputs.lowercase }}/learncicd-app:latest
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
