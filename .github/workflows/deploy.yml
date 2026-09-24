@@ -41,26 +41,35 @@ jobs:
           echo "Checking secret..."
           echo "API Key loaded successfully!"
 
+  # --- BUILD JOB: Prepare & Package Assets (Runs on PRs and Pushes) ---
+  build:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Build / Optimization
+        run: |
+          echo "Running build process..."
+          mkdir -p public
+          cp index.html public/
+          # Future optimization commands (like CSS minification) go here
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'public'
+
   # --- CD JOB: Deploy to GitHub Pages (Runs ONLY when merged/pushed to main) ---
   deploy:
-    needs: lint
+    needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
